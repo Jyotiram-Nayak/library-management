@@ -1,8 +1,13 @@
 ﻿using library_management.Data.Model;
+using library_management.Data.ViewModel;
 using library_management.Data.ViewModel.Authentication;
 using library_management.Data.ViewModel.Email;
 using library_management.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace library_management.Data.Services
 {
@@ -11,13 +16,16 @@ namespace library_management.Data.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IConfiguration _configuration;
         private readonly IEmailServices _emailServices;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
         public AuthRepository(UserManager<ApplicationUser> userManager,
-            IConfiguration configuration,IEmailServices emailServices)
+            IConfiguration configuration,IEmailServices emailServices,
+            SignInManager<ApplicationUser> signInManager)
         {
             _userManager = userManager;
             _configuration = configuration;
             _emailServices = emailServices;
+            _signInManager = signInManager;
         }
         public async Task<IdentityResult> RegisterAsync(RegisterVM registerVM)
         {
@@ -75,6 +83,37 @@ namespace library_management.Data.Services
             };
             await _emailServices.SendEmailConfirmationMessage(emailMessage);
         }
+        public async Task<string> LoginAsync(LoginVM loginVM)
+        {
+            var result = await _signInManager.PasswordSignInAsync(loginVM.Email, loginVM.Password, false, false);
 
+            if (result.IsNotAllowed)
+            {
+                return "Not Allow";
+            }
+            else if (!result.Succeeded)
+            {
+                return null;
+            }
+            var user = await _userManager.FindByEmailAsync(loginVM.Email);
+            var authClaims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, loginVM.Email),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+            };
+
+            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["JWT:ValidIssuer"],
+                audience: _configuration["JWT:ValidAudience"],
+                expires: DateTime.Now.AddDays(1),
+                claims: authClaims,
+                signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
     }
 }
