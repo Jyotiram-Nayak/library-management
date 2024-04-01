@@ -17,23 +17,32 @@ namespace library_management.Services
             _smtpconfig = smtpconfig.Value;
             _configuration = configuration;
         }
-        public async Task SendEmailMessage(EmailMessage emailMessage)
-        {
-            emailMessage.Subject = "Email Message from BookStore";
-            emailMessage.Body = UpdatePlaceHolders(GetEmailBody("TestEmail"), emailMessage.PlaceHolders);
-            await SendEmail(emailMessage);
-        }
+        /// <summary>
+        /// pass all parameter to 
+        /// </summary>
+        /// <param name="emailMessage"></param>
+        /// <returns></returns>
         public async Task SendEmailConfirmationMessage(EmailMessage emailMessage)
         {
             emailMessage.Subject = "Hellow Confirm Your email";
             emailMessage.Body = UpdatePlaceHolders(GetEmailBody("EmailConfirmation"), emailMessage.PlaceHolders);
             await SendEmail(emailMessage);
         }
+        /// <summary>
+        /// Get email body from templates.
+        /// </summary>
+        /// <param name="tempemailName"></param>
+        /// <returns> read the body from template </returns>
         private string GetEmailBody(string tempemailName)
         {
             var body = File.ReadAllText(string.Format(templatePath, tempemailName));
             return body;
         }
+        /// <summary>
+        /// after registration sending email confirmation message 
+        /// </summary>
+        /// <param name="emailMessage"></param>
+        /// <returns></returns>
         private async Task SendEmail(EmailMessage emailMessage)
         {
             MailMessage mailMessage = new MailMessage
@@ -61,7 +70,12 @@ namespace library_management.Services
             mailMessage.BodyEncoding = Encoding.Default;
             await smtpClient.SendMailAsync(mailMessage);
         }
-
+        /// <summary>
+        /// Update the Email body
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="keyValuePairs"></param>
+        /// <returns> return the email body after modification </returns>
         private string UpdatePlaceHolders(string text, List<KeyValuePair<string, string>> keyValuePairs)
         {
             if (!string.IsNullOrEmpty(text) && keyValuePairs != null)

@@ -1,11 +1,11 @@
 using library_management.Data;
 using library_management.Data.Model;
+using library_management.Data.Repository;
 using library_management.Data.Services;
 using library_management.Data.ViewModel.Email;
 using library_management.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
@@ -14,11 +14,19 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AppDbContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>(option => option.SignIn.RequireConfirmedEmail = true).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(option => option.SignIn.RequireConfirmedEmail = true).AddRoles<IdentityRole>().AddEntityFrameworkStores<AppDbContext>()
+    .AddDefaultTokenProviders()
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddDefaultTokenProviders()
+    .AddDefaultTokenProviders();
 
 builder.Services.AddTransient<IAuthRepository, AuthRepository>();
 builder.Services.AddTransient<IEmailServices, EmailServices>();
 builder.Services.AddTransient<IUserServices, UserServices>();
+builder.Services.AddTransient<IBookRepository, BookRepository>();
+builder.Services.AddTransient<IAuthorRepository, AuthorRepository>();
+
+builder.Services.AddAutoMapper(typeof(Program));
 
 //configure services with SMTPConfiguration
 builder.Services.Configure<SMTPConfiguration>(builder.Configuration.GetSection("EmailSettings"));
@@ -45,7 +53,10 @@ builder.Services.AddAuthentication(option =>
         NameClaimType = ClaimTypes.NameIdentifier
     };
 });
+builder.Services.AddAuthorization(option =>
+{
 
+});
 // Add services to the container.
 builder.Services.AddControllers();
 

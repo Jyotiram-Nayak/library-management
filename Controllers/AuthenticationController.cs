@@ -1,27 +1,33 @@
 ﻿using Azure;
+using library_management.Data.Model;
 using library_management.Data.Services;
-using library_management.Data.ViewModel;
 using library_management.Data.ViewModel.Authentication;
 using library_management.Services;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace library_management.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AllowAnonymous]
     public class AuthenticationController : ControllerBase
     {
         private readonly IAuthRepository _authRepository;
         private readonly IUserServices _userServices;
+        private readonly UserManager<ApplicationUser> _userManager;
         private object responce;
 
         public AuthenticationController(IAuthRepository authRepository,
-            IUserServices userServices)
+            IUserServices userServices,
+            UserManager<ApplicationUser> userManager)
         {
             _authRepository = authRepository;
             _userServices = userServices;
+            _userManager = userManager;
         }
         /// <summary>
         /// Registration
@@ -29,7 +35,7 @@ namespace library_management.Controllers
         /// <param name="registerVM"></param>
         /// <returns></returns>
         [HttpPost("register-user")]
-        public async Task<IActionResult> Register([FromBody]RegisterVM registerVM)
+        public async Task<IActionResult> Register([FromBody] RegisterVM registerVM)
         {
             if (!ModelState.IsValid)
             {
@@ -71,20 +77,21 @@ namespace library_management.Controllers
         [HttpPost("login-user")]
         public async Task<IActionResult> Login([FromBody] LoginVM loginVM)
         {
-            var token = await _authRepository.LoginAsync(loginVM);
-
-            if (token == null)
+            var result = await _authRepository.LoginAsync(loginVM);
+            if (result.Succeeded)
             {
-                return Unauthorized(new { success = false, message = "SignIn failed." });
+                var token = await _authRepository.GenrateJWTTokenAsync(loginVM.Email);
+                var uid = _userServices.GetUserId();
+                responce = new
+                {
+                    success = true,
+                    message = "SignIn successfully.",
+                    result = new { uid, token }
+                };
+                return Ok(responce);
             }
-            var uid = _userServices.GetUserId();
-            responce = new
-            {
-                success = true,
-                message = "SignIn successfully.",
-                result = new { uid, token }
-            };
-            return Ok(responce);
+            return Unauthorized(new { success = false, message = "SignIn failed." });
+
         }
     }
 }

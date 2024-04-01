@@ -1,4 +1,4 @@
-﻿namespace library_management.Data.ViewModel
+﻿namespace library_management.Data.ViewModel.Authentication
 {
     public class LoginVM
     {

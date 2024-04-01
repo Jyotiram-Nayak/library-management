@@ -10,5 +10,14 @@ namespace library_management.Data
         {
             
         }
-    }
+        public DbSet<Books> Books { get; set; }
+        public DbSet<Authors> Authors { get; set; }
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    modelBuilder.Entity<Books>()
+        //        .HasOne(b => b.Authors)
+        //        .WithMany(a => a.Books)
+        //        .HasForeignKey(b => b.AuthorId);
+        //}
+    }   
 }
