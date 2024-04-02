@@ -11,6 +11,6 @@ namespace library_management.Data.Model
         public string Name { get; set; }
         [Required]
         public string Biography { get; set; }
-        //public ICollection<Books> Books { get; set; }
+        public ICollection<Books> Books { get; set; }
     }
 }

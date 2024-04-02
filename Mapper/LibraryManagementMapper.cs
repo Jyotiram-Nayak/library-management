@@ -10,6 +10,10 @@ namespace library_management.Mapper
         {
             CreateMap<Books, BooksVM>();
             CreateMap<BooksVM, Books>();
+            CreateMap<Authors, AuthorsVM>();
+            CreateMap<AuthorsVM, Authors>();
+            CreateMap<BorrowBookVM, Borrowings>();
+            CreateMap<BookISBNVM, BooksISBN>();
         }
     }
 }

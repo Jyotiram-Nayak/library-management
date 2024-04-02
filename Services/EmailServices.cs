@@ -3,6 +3,9 @@ using Microsoft.Extensions.Options;
 using System.Net.Mail;
 using System.Net;
 using System.Text;
+using library_management.Data.Model;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 
 namespace library_management.Services
 {
@@ -11,22 +14,37 @@ namespace library_management.Services
         private const string templatePath = @"EmailTemplate/{0}.html";
         private readonly SMTPConfiguration _smtpconfig;
         private readonly IConfiguration _configuration;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public EmailServices(IOptions<SMTPConfiguration> smtpconfig, IConfiguration configuration)
+        public EmailServices(IOptions<SMTPConfiguration> smtpconfig,
+            IConfiguration configuration,
+            UserManager<ApplicationUser> userManager)
         {
             _smtpconfig = smtpconfig.Value;
             _configuration = configuration;
+            _userManager = userManager;
         }
-        /// <summary>
-        /// pass all parameter to 
-        /// </summary>
-        /// <param name="emailMessage"></param>
-        /// <returns></returns>
-        public async Task SendEmailConfirmationMessage(EmailMessage emailMessage)
+        public async Task SendEmailConfirmationAsync(ApplicationUser user)
         {
-            emailMessage.Subject = "Hellow Confirm Your email";
-            emailMessage.Body = UpdatePlaceHolders(GetEmailBody("EmailConfirmation"), emailMessage.PlaceHolders);
-            await SendEmail(emailMessage);
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            if (!string.IsNullOrEmpty(token))
+            {
+                //await SendEmailConfirmationAsync(user, token);
+                string appDomain = _configuration.GetSection("Application:AppDomain").Value ?? "";
+                string confirmLink = _configuration.GetSection("Application:EmailConfirmation").Value ?? "";
+                EmailMessage emailMessage = new EmailMessage
+                {
+                    ToEmails = new List<string>() { user.Email },
+                    PlaceHolders = new List<KeyValuePair<string, string>>()
+                    {
+                        new KeyValuePair<string, string>("{{UserName}}",user.FirstName),
+                        new KeyValuePair<string, string>("{{Link}}",string.Format(appDomain+confirmLink,user.Id,token))
+                    }
+                };
+                emailMessage.Subject = UpdatePlaceHolders("Hellow {{UserName}}! Confirm Your email", emailMessage.PlaceHolders);
+                emailMessage.Body = UpdatePlaceHolders(GetEmailBody("EmailConfirmation"), emailMessage.PlaceHolders);
+                await SendEmailAsync(emailMessage);
+            }
         }
         /// <summary>
         /// Get email body from templates.
@@ -43,7 +61,7 @@ namespace library_management.Services
         /// </summary>
         /// <param name="emailMessage"></param>
         /// <returns></returns>
-        private async Task SendEmail(EmailMessage emailMessage)
+        private async Task SendEmailAsync(EmailMessage emailMessage)
         {
             MailMessage mailMessage = new MailMessage
             {
@@ -90,5 +108,7 @@ namespace library_management.Services
             }
             return text;
         }
+        
     }
+
 }

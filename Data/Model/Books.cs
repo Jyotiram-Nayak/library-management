@@ -12,8 +12,8 @@ namespace library_management.Data.Model
         public string Title { get; set; }
         [Required]
         public int AuthorId { get; set; }
-        //[ForeignKey("AuthorId")]
-        //public Authors Authors { get; set; }
+        [ForeignKey("AuthorId")]
+        public Authors Authors { get; set; }
         [Required]
         public DateTime PublicationDate { get; set; }
         [Required]

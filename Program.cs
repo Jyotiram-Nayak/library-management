@@ -1,7 +1,7 @@
 using library_management.Data;
 using library_management.Data.Model;
 using library_management.Data.Repository;
-using library_management.Data.Services;
+using library_management.Data.Repository;
 using library_management.Data.ViewModel.Email;
 using library_management.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -25,6 +25,8 @@ builder.Services.AddTransient<IEmailServices, EmailServices>();
 builder.Services.AddTransient<IUserServices, UserServices>();
 builder.Services.AddTransient<IBookRepository, BookRepository>();
 builder.Services.AddTransient<IAuthorRepository, AuthorRepository>();
+builder.Services.AddTransient<IISBNRepository, ISBNRepository>();
+builder.Services.AddTransient<IBorrowRepository, BorrowRepository>();
 
 builder.Services.AddAutoMapper(typeof(Program));
 

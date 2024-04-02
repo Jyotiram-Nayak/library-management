@@ -12,8 +12,8 @@ using library_management.Data;
 namespace library_management.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240401071614_add books and authors table")]
-    partial class addbooksandauthorstable
+    [Migration("20240402054137_createnew")]
+    partial class createnew
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -281,6 +281,8 @@ namespace library_management.Migrations
 
                     b.HasKey("BookId");
 
+                    b.HasIndex("AuthorId");
+
                     b.ToTable("Books");
                 });
 
@@ -333,6 +335,22 @@ namespace library_management.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("library_management.Data.Model.Books", b =>
+                {
+                    b.HasOne("library_management.Data.Model.Authors", "Authors")
+                        .WithMany("Books")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Authors");
+                });
+
+            modelBuilder.Entity("library_management.Data.Model.Authors", b =>
+                {
+                    b.Navigation("Books");
                 });
 #pragma warning restore 612, 618
         }
