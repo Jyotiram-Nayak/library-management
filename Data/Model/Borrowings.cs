@@ -15,6 +15,7 @@ namespace library_management.Data.Model
         [ForeignKey("Books")]
         public int BookId { get; set; }
         public Books Book { get; set; }
+        public string ISBN { get; set; }
         [Required]
         [DataType(DataType.DateTime)]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd HH:mm:ss}")]

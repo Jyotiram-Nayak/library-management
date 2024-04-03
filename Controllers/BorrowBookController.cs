@@ -17,10 +17,10 @@ namespace library_management.Controllers
         {
             _borrowRepository = borrowRepository;
         }
-        [HttpPost("borrow-book/{id}")]
-        public async Task<IActionResult> BorrowBook([FromRoute]int bookId)
+        [HttpPost("borrow-book/{bookId}")]
+        public async Task<IActionResult> BorrowBook(int bookId, [FromQuery] string isbn)
         {
-            var result = await _borrowRepository.BorrowBookAsync(bookId);
+            var result = await _borrowRepository.BorrowBookAsync(bookId,isbn);
             if (result == 0)
             {
                 response = new { success = false, message = "Failed to Issue Book.", data = result };

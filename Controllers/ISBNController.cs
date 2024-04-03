@@ -20,6 +20,18 @@ namespace library_management.Controllers
             _iSBNRepository = iSBNRepository;
             _bookRepository = bookRepository;
         }
+        [HttpGet("get-all-isbn")]
+        public async Task<IActionResult> GetAllISBN()
+        {
+            var result = await _iSBNRepository.GetISBNAllAsync();
+            if (result == null)
+            {
+                response = new { success = false, message = "Failed fetch isbn number.", data = result };
+                return Unauthorized(response);
+            };
+            response = new { success = true, message = "BookISBN added successfully...", data = result };
+            return Ok(response);
+        }
         [HttpPost("add-isbn/{bookId}")]
         public async Task<IActionResult> AddISBNNumber([FromRoute] int bookId)
         {
@@ -28,10 +40,22 @@ namespace library_management.Controllers
             var result = await _iSBNRepository.AddISBN(bookId);
             if (result == 0)
             {
-                response = new { success = false, message = "Failed to add author.", data = result };
+                response = new { success = false, message = "Failed to add isbn number.", data = result };
                 return Unauthorized(response);
             };
             response = new { success = true, message = "BookISBN added successfully...", data = result };
+            return Ok(response);
+        }
+        [HttpPut("update-isbn/{isbnno}")]
+        public async Task<IActionResult> UpdateISBN(string isbnno, [FromQuery]string userId, [FromQuery] bool isIssue)
+        {
+            var result = await _iSBNRepository.UpdateISBNAsync(isbnno,userId,isIssue);
+            if (result == 0)
+            {
+                response = new { success = false, message = "Failed to update isbn number.", data = result };
+                return Unauthorized(response);
+            };
+            response = new { success = true, message = "BookISBN updated successfully...", data = result };
             return Ok(response);
         }
     }

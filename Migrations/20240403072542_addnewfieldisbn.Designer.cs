@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using library_management.Data;
 
@@ -11,9 +12,11 @@ using library_management.Data;
 namespace library_management.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240403072542_addnewfieldisbn")]
+    partial class addnewfieldisbn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -299,16 +302,12 @@ namespace library_management.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("isIssue")
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BookId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("BooksISBN");
                 });
@@ -410,23 +409,6 @@ namespace library_management.Migrations
                         .IsRequired();
 
                     b.Navigation("Authors");
-                });
-
-            modelBuilder.Entity("library_management.Data.Model.BooksISBN", b =>
-                {
-                    b.HasOne("library_management.Data.Model.Books", "Book")
-                        .WithMany()
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("library_management.Data.Model.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("Book");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("library_management.Data.Model.Borrowings", b =>

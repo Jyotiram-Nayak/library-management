@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using library_management.Data.Model;
 using library_management.Data.ViewModel;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.JsonPatch;
 using static System.Reflection.Metadata.BlobBuilder;
+
 
 namespace library_management.Data.Repository
 {
@@ -11,7 +14,7 @@ namespace library_management.Data.Repository
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
 
-        public BookRepository(AppDbContext context,IMapper mapper)
+        public BookRepository(AppDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
@@ -28,12 +31,12 @@ namespace library_management.Data.Repository
         }
         public async Task<BooksVM> GetBookByIdAsync(int id)
         {
-            var books =await _context.Books.FindAsync(id);
+            var books = await _context.Books.FindAsync(id);
             return _mapper.Map<BooksVM>(books);
         }
-        public async Task<int> UpdateBookByIdAsync(int id,BooksVM booksVM)
+        public async Task<int> UpdateBookByIdAsync(int id, BooksVM booksVM)
         {
-            var book = await _context.Books.Where(x=>x.BookId == id).FirstOrDefaultAsync();
+            var book = await _context.Books.Where(x => x.BookId == id).FirstOrDefaultAsync();
             if (book != null)
             {
                 _mapper.Map<Books>(booksVM);
@@ -51,6 +54,22 @@ namespace library_management.Data.Repository
                 return status;
             }
             return 0;
+        }
+        public async Task<int> UpdateBookQtyAsync(int bookId, bool isAdd)
+        {
+            var book = await _context.Books.FindAsync(bookId);
+            if(book != null)
+            {
+                book.TotalCopies = book.TotalCopies + 1;
+            }
+            //book.TotalCopies = isAdd == true ? book.TotalCopies + 1 : book.TotalCopies - 1;
+            return await _context.SaveChangesAsync();
+        }
+        public async Task<int> UpdateAvailableQty(int bookId, bool isAdd)
+        {
+            var book = await _context.Books.FindAsync(bookId);
+            book.AvailableCopies = isAdd == true ? book.AvailableCopies + 1 : book.AvailableCopies - 1;
+            return await _context.SaveChangesAsync();
         }
     }
 }

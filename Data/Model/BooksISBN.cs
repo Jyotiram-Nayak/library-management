@@ -11,11 +11,13 @@ namespace library_management.Data.Model
         [Required]
         public string ISBN { get; set; }
 
-        [ForeignKey("AspNetUsers")]
+        [ForeignKey("ApplicationUser")]
         public string? UserId { get; set; }
+        public ApplicationUser User { get; set; }
         [Required]
         [ForeignKey("Books")]
         public int BookId { get; set; }
+        public Books Book { get; set; }
         [Required]
         public bool isIssue { get; set; } = false;
     }

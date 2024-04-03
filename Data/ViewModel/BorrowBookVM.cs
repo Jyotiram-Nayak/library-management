@@ -11,6 +11,8 @@ namespace library_management.Data.ViewModel
         [Required]
         public int BookId { get; set; }
         [Required]
+        public string ISBN { get; set; }
+        [Required]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm:ss}", ApplyFormatInEditMode = true)]
         public DateTime BorrowDate { get; set; } = DateTime.Now;
         [Required]

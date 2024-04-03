@@ -1,7 +1,6 @@
 using library_management.Data;
 using library_management.Data.Model;
 using library_management.Data.Repository;
-using library_management.Data.Repository;
 using library_management.Data.ViewModel.Email;
 using library_management.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -12,6 +11,8 @@ using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+// Add services to the container.
+builder.Services.AddControllers();
 
 builder.Services.AddDbContext<AppDbContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(option => option.SignIn.RequireConfirmedEmail = true).AddRoles<IdentityRole>().AddEntityFrameworkStores<AppDbContext>()
@@ -59,8 +60,7 @@ builder.Services.AddAuthorization(option =>
 {
 
 });
-// Add services to the container.
-builder.Services.AddControllers();
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
