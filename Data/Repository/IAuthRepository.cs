@@ -11,5 +11,6 @@ namespace library_management.Data.Repository
         Task<SignInResult> LoginAsync(LoginVM loginVM);
         Task<string> GenerateJWTTokenAsync(string email);
         Task<ApplicationUser> GetUserByEmailAsync(string email);
+        Task<IdentityResult> ChangePasswordAsync(ChangePasswordVM changePassword);
     }
 }

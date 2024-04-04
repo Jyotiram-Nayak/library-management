@@ -90,5 +90,16 @@ namespace library_management.Controllers
             responce = new { success = true, message = "SignIn successfully.", data = new { uid, token } };
             return Ok(responce);
         }
+        [HttpPost("change-password")]
+        [Authorize]
+        public async Task<IActionResult> ChangePassword(ChangePasswordVM changePassword)
+        {
+            var result = await _authRepository.ChangePasswordAsync(changePassword);
+            if (!result.Succeeded)
+            {
+                return Unauthorized();
+            }
+            return Ok(result);
+        }
     }
 }

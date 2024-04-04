@@ -21,5 +21,6 @@ namespace library_management.Data.ViewModel
         [Required]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime? ReturnDate { get; set; }
+        public BooksVM Book { get; set; } 
     }
 }

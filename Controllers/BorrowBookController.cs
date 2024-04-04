@@ -2,13 +2,16 @@
 using library_management.Data;
 using library_management.Data.Repository;
 using library_management.Data.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Policy;
 
 namespace library_management.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class BorrowBookController : ControllerBase
     {
         private readonly IBorrowRepository _borrowRepository;
@@ -27,6 +30,18 @@ namespace library_management.Controllers
                 return Unauthorized(response);
             };
             response = new { success = true, message = "Book issue successfully...", data = result };
+            return Ok(response);
+        }
+        [HttpGet("filter-data/{AuthorId}")]
+        public async Task<IActionResult> FilterBorrowBook(int? AuthorId, [FromQuery]int? BookId)
+        {
+            var result = await _borrowRepository.FilterBorrowedBooks(AuthorId,BookId);
+            if (result == null)
+            {
+                response = new { success = false, message = "Failed to Fetched Book.", data = result };
+                return Unauthorized(response);
+            };
+            response = new { success = true, message = "Book fetched successfully...", data = result };
             return Ok(response);
         }
     }

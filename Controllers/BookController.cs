@@ -1,5 +1,6 @@
 ﻿using library_management.Data.Repository;
 using library_management.Data.ViewModel;
+using library_management.Data.ViewModel.Authentication;
 using library_management.Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
@@ -10,7 +11,6 @@ namespace library_management.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [AllowAnonymous]
     public class BookController : ControllerBase
     {
         private readonly IBookRepository _bookRepository;
@@ -23,6 +23,7 @@ namespace library_management.Controllers
             _authorRepository = authorRepository;
         }
         [HttpGet("get-all-books")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAllBooks()
         {
             var result = await _bookRepository.GetAllBooksAsync();
@@ -35,6 +36,7 @@ namespace library_management.Controllers
             //return Ok(ResponseHelper.GenerateResponse(true, "Books fetched successfully...", result));
         }
         [HttpGet("get-book-details/{id}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetBookDetails([FromRoute] int id)
         {
             var result = await _bookRepository.GetBookByIdAsync(id);
@@ -46,8 +48,8 @@ namespace library_management.Controllers
             response = new { success = true, message = "Book fetched successfully...", data = result };
             return Ok(response);
         }
-
         [HttpPost("add-book")]
+        [Authorize(Roles =UserRoles.Admin)]
         public async Task<IActionResult> AddBook([FromBody] BooksVM booksVM)
         {
             var author = await _authorRepository.GetAuthorByIdAsync(booksVM.AuthorId);
@@ -65,7 +67,9 @@ namespace library_management.Controllers
             response = new { success = true, message = "Book added successfully...", data = result };
             return Ok(response);
         }
+
         [HttpPut("update-book/{id}")]
+        [Authorize(Roles = UserRoles.Admin)]
         public async Task<IActionResult> UpdateBookById([FromRoute] int id, [FromBody] BooksVM booksVM)
         {
             var result = await _bookRepository.UpdateBookByIdAsync(id, booksVM);
@@ -78,6 +82,7 @@ namespace library_management.Controllers
             return Ok(response);
         }
         [HttpDelete("delete-book/{id}")]
+        [Authorize(Roles = UserRoles.Admin)]
         public async Task<IActionResult> DeleteBookById(int id)
         {
             var result = await _bookRepository.DeleteBookById(id);

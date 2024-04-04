@@ -1,5 +1,7 @@
 ﻿using Azure;
 using library_management.Data.Repository;
+using library_management.Data.ViewModel.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +10,7 @@ namespace library_management.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = UserRoles.Admin)]
     public class ISBNController : ControllerBase
     {
         private readonly IISBNRepository _iSBNRepository;

@@ -1,4 +1,5 @@
 ﻿using library_management.Data.Model;
+using library_management.Data.ViewModel;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,6 +11,7 @@ namespace library_management.Data
         {
             
         }
+        public DbSet<Category> Category { get; set; }
         public DbSet<Books> Books { get; set; }
         public DbSet<Authors> Authors { get; set; }
         public DbSet<BooksISBN> BooksISBN { get; set; }

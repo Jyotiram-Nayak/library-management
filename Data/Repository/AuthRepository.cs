@@ -17,15 +17,18 @@ namespace library_management.Data.Repository
         private readonly IConfiguration _configuration;
         private readonly IEmailServices _emailServices;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IUserServices _userServices;
 
         public AuthRepository(UserManager<ApplicationUser> userManager,
             IConfiguration configuration,IEmailServices emailServices,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager,
+            IUserServices userServices)
         {
             _userManager = userManager;
             _configuration = configuration;
             _emailServices = emailServices;
             _signInManager = signInManager;
+            this._userServices = userServices;
         }
         /// <summary>
         /// user Registration method
@@ -113,6 +116,16 @@ namespace library_management.Data.Repository
         {
             var user = await _userManager.FindByEmailAsync(email);
             return user;
+        }
+        public async Task<IdentityResult> ChangePasswordAsync(ChangePasswordVM changePassword)
+        {
+            var uid = _userServices.GetUserId();
+            var user = await _userManager.FindByIdAsync(uid);
+            if (user == null)
+            {
+                return null;
+            }
+            return await _userManager.ChangePasswordAsync(user, changePassword.CurrentPassword, changePassword.NewPassword);
         }
     }
 }
