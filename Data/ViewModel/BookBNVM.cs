@@ -2,15 +2,14 @@
 
 namespace library_management.Data.ViewModel
 {
-    public class BookISBNVM
+    public class BookBNVM
     {
-        [Required]
         public int Id { get; set; }
         [Required]
         public string ISBN { get; set; }
         public string? UserId { get; set; }
         [Required]
-        public int BookId { get; set; }
+        public Guid BookId { get; set; }
         [Required]
         public bool isIssue { get; set; } = false;
     }

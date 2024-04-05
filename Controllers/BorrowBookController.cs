@@ -15,13 +15,13 @@ namespace library_management.Controllers
     public class BorrowBookController : ControllerBase
     {
         private readonly IBorrowRepository _borrowRepository;
-        private object response;
+        private object? response;
         public BorrowBookController(IBorrowRepository borrowRepository)
         {
             _borrowRepository = borrowRepository;
         }
         [HttpPost("borrow-book/{bookId}")]
-        public async Task<IActionResult> BorrowBook(int bookId, [FromQuery] string isbn)
+        public async Task<IActionResult> BorrowBook(Guid bookId, [FromQuery] string isbn)
         {
             var result = await _borrowRepository.BorrowBookAsync(bookId,isbn);
             if (result == 0)
@@ -33,7 +33,7 @@ namespace library_management.Controllers
             return Ok(response);
         }
         [HttpGet("filter-data/{AuthorId}")]
-        public async Task<IActionResult> FilterBorrowBook(int? AuthorId, [FromQuery]int? BookId)
+        public async Task<IActionResult> FilterBorrowBook(Guid? AuthorId, [FromQuery] Guid? BookId)
         {
             var result = await _borrowRepository.FilterBorrowedBooks(AuthorId,BookId);
             if (result == null)

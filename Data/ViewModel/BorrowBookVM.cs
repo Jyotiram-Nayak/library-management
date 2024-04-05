@@ -4,12 +4,11 @@ namespace library_management.Data.ViewModel
 {
     public class BorrowBookVM
     {
-        [Required]
         public int BorrowId { get; set; }
         [Required]
         public string UserId { get; set; }
         [Required]
-        public int BookId { get; set; }
+        public Guid BookId { get; set; }
         [Required]
         public string ISBN { get; set; }
         [Required]

@@ -1,21 +1,22 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace library_management.Migrations
 {
     /// <inheritdoc />
-    public partial class addnewfieldisbn : Migration
+    public partial class addisbn : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
+            migrationBuilder.AddColumn<Guid>(
                 name: "ISBN",
-                table: "Borrowings",
-                type: "nvarchar(max)",
+                table: "Books",
+                type: "uniqueidentifier",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
         }
 
         /// <inheritdoc />
@@ -23,7 +24,7 @@ namespace library_management.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "ISBN",
-                table: "Borrowings");
+                table: "Books");
         }
     }
 }

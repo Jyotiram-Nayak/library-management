@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace library_management.Data.Repository
 {
-    public class ISBNRepository : IISBNRepository
+    public class BNRepository : IBNRepository
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
         private readonly IBookRepository _bookRepository;
 
-        public ISBNRepository(AppDbContext context,
+        public BNRepository(AppDbContext context,
             IMapper mapper,
             IBookRepository bookRepository)
         {
@@ -19,28 +19,28 @@ namespace library_management.Data.Repository
             _mapper = mapper;
             this._bookRepository = bookRepository;
         }
-        public async Task<int> AddISBN(int bookId)
+        public async Task<int> AddISBN(Guid bookId)
         {
-            BookISBNVM bookISBN = new BookISBNVM();
+            BookBNVM bookISBN = new BookBNVM();
             bookISBN.ISBN = Guid.NewGuid().ToString();
             bookISBN.BookId = bookId;
-            _context.BooksISBN.Add(_mapper.Map<BooksISBN>(bookISBN));
+            _context.BooksBN.Add(_mapper.Map<BooksBN>(bookISBN));
             var result = await _context.SaveChangesAsync();
             await _bookRepository.UpdateBookQtyAsync(bookId, true);
             return result;
         }
         public async Task<int> UpdateISBNAsync(string isbnno, string userId, bool isIssue)
         {
-            var bookISBN = await _context.BooksISBN.Where(x => x.ISBN == isbnno).FirstOrDefaultAsync();
+            var bookISBN = await _context.BooksBN.Where(x => x.ISBN == isbnno).FirstOrDefaultAsync();
             bookISBN.UserId = userId;
             bookISBN.isIssue = isIssue;
             var result = await _context.SaveChangesAsync();
             return result;
 
         }
-        public async Task<BookISBNVM> GetISBNDetailsAsync(string isbn)
+        public async Task<BookBNVM> GetISBNDetailsAsync(string isbn)
         {
-            var isbndetails = await _context.BooksISBN.Where(x => x.ISBN == isbn).Select(x => new BookISBNVM
+            var isbndetails = await _context.BooksBN.Where(x => x.ISBN == isbn).Select(x => new BookBNVM
             {
                 Id = x.Id,
                 UserId = x.UserId,
@@ -51,10 +51,10 @@ namespace library_management.Data.Repository
             return isbndetails;
             //return _mapper.Map<BookISBNVM>(isbndetails);
         }
-        public async Task<List<BookISBNVM>> GetISBNAllAsync()
+        public async Task<List<BookBNVM>> GetISBNAllAsync()
         {
-            var isbndetails = await _context.BooksISBN.ToListAsync();
-            return _mapper.Map<List<BookISBNVM>>(isbndetails);
+            var isbndetails = await _context.BooksBN.ToListAsync();
+            return _mapper.Map<List<BookBNVM>>(isbndetails);
         }
     }
 }

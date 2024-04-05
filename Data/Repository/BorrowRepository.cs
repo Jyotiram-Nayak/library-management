@@ -13,13 +13,13 @@ namespace library_management.Data.Repository
         private readonly IUserServices _userServices;
         private readonly IMapper _mapper;
         private readonly IBookRepository _bookRepository;
-        private readonly IISBNRepository _iSBNRepository;
+        private readonly IBNRepository _iSBNRepository;
 
         public BorrowRepository(AppDbContext context,
             IUserServices userServices,
             IMapper mapper,
             IBookRepository bookRepository,
-            IISBNRepository iSBNRepository)
+            IBNRepository iSBNRepository)
         {
             _context = context;
             _userServices = userServices;
@@ -27,10 +27,10 @@ namespace library_management.Data.Repository
             _bookRepository = bookRepository;
             _iSBNRepository = iSBNRepository;
         }
-        public async Task<int> BorrowBookAsync(int bookId, string isbn)
+        public async Task<int> BorrowBookAsync(Guid bookId, string isbn)
         {
-            var book = await _bookRepository.GetBookByIdAsync(bookId);
-            if (book == null || book.AvailableCopies < 1) { return 0; }
+            var book = await _bookRepository.GetBookByIdAsync(bookId,null,null,null);
+            if (book == null || book[0].AvailableCopies < 1) { return 0; }
             var isbnDetails = await _iSBNRepository.GetISBNDetailsAsync(isbn);
             if (isbnDetails == null || isbnDetails.isIssue == true) { return 0; }
             var userId = _userServices.GetUserId();
@@ -46,7 +46,7 @@ namespace library_management.Data.Repository
             var status3 = await _iSBNRepository.UpdateISBNAsync(isbn, userId, true);
             return result;
         }
-        public async Task<List<BorrowBookVM>> FilterBorrowedBooks(int? AuthorId,int? BookId)
+        public async Task<List<BorrowBookVM>> FilterBorrowedBooks(Guid? AuthorId, Guid? BookId)
         {
             var query =_context.Borrowings.Include(x => x.Book).AsQueryable();
 

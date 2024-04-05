@@ -14,7 +14,7 @@ namespace library_management.Data
         public DbSet<Category> Category { get; set; }
         public DbSet<Books> Books { get; set; }
         public DbSet<Authors> Authors { get; set; }
-        public DbSet<BooksISBN> BooksISBN { get; set; }
+        public DbSet<BooksBN> BooksBN { get; set; }
         public DbSet<Borrowings> Borrowings { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

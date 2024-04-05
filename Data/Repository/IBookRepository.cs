@@ -8,10 +8,10 @@ namespace library_management.Data.Repository
     {
         Task<List<BooksVM>> GetAllBooksAsync();
         Task<int> AddBooksAsync(BooksVM booksVM);
-        Task<BooksVM> GetBookByIdAsync(int id);
-        Task<int> UpdateBookByIdAsync(int id, BooksVM booksVM);
-        Task<int> DeleteBookById(int id);
-        Task<int> UpdateBookQtyAsync(int bookId, bool isAdd);
-        Task<int> UpdateAvailableQty(int bookId, bool isAdd);
+        Task<List<BooksVM>> GetBookByIdAsync(Guid? bookId, Guid? authorId, Guid? isbn, Guid? categoryId);
+        Task<int> UpdateBookByIdAsync(Guid id, BooksVM booksVM);
+        Task<int> DeleteBookById(Guid id);
+        Task<int> UpdateBookQtyAsync(Guid bookId, bool isAdd);
+        Task<int> UpdateAvailableQty(Guid bookId, bool isAdd);
     }
 }

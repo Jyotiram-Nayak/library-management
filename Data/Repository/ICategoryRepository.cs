@@ -5,9 +5,9 @@ namespace library_management.Data.Repository
     public interface ICategoryRepository
     {
         Task<int> AddCategoryAsunc(CategoryVM categoryVM);
-        Task<int> DeleteCategoryAsunc(int id);
+        Task<int> DeleteCategoryAsunc(Guid id);
         Task<List<CategoryVM>> GetAllCategory();
-        Task<CategoryVM> GetCategoryDetails(int id);
-        Task<int> UpdateCategoryAsunc(int id, CategoryVM categoryVM);
+        Task<CategoryVM> GetCategoryDetails(Guid id);
+        Task<int> UpdateCategoryAsunc(Guid id, CategoryVM categoryVM);
     }
 }

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace library_management.Data.Model
 {
-    public class BooksISBN
+    public class BooksBN
     {
         [Key]
         public int Id { get; set; }
@@ -16,7 +16,7 @@ namespace library_management.Data.Model
         public ApplicationUser User { get; set; }
         [Required]
         [ForeignKey("Books")]
-        public int BookId { get; set; }
+        public Guid BookId { get; set; }
         public Books Book { get; set; }
         [Required]
         public bool isIssue { get; set; } = false;

@@ -4,8 +4,7 @@ namespace library_management.Data.ViewModel
 {
     public class CategoryVM
     {
-        [Required]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         [Required]
         public string Name { get; set; }
         [Required]

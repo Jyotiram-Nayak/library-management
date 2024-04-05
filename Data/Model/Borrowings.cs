@@ -13,7 +13,7 @@ namespace library_management.Data.Model
         public ApplicationUser User { get; set; }
         [Required]
         [ForeignKey("Books")]
-        public int BookId { get; set; }
+        public Guid BookId { get; set; }
         public Books Book { get; set; }
         public string ISBN { get; set; }
         [Required]

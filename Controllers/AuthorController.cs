@@ -30,7 +30,7 @@ namespace library_management.Controllers
             var result = await _authorRepository.GetAllAuthorsAsync();
             if (result == null)
             {
-                response = new { success = false, message = "Authors not found.", data = result };
+                response = new { success = false, message = "Failed to fetch Authors.", data = result };
                 return Unauthorized(response);
             };
             response = new { success = true, message = "Authors fetched successfully...", data = result };
@@ -42,12 +42,12 @@ namespace library_management.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("get-author-details/{id}")]
-        public async Task<IActionResult> GetAuthorById([FromRoute]int id)
+        public async Task<IActionResult> GetAuthorById([FromRoute] Guid id)
         {
             var result = await _authorRepository.GetAuthorByIdAsync(id);
             if (result == null)
             {
-                response = new { success = false, message = "Author not found.", data = result };
+                response = new { success = false, message = "Failed to fetch Author.", data = result };
                 return Ok(response);
             };
             response = new { success = true, message = "Author fetched successfully...", data = result };
@@ -71,7 +71,7 @@ namespace library_management.Controllers
             return Ok(response);
         }
         [HttpPut("update-author/{id}")]
-        public async Task<IActionResult> UpdateAuthor([FromRoute]int id,AuthorsVM authorsVM)
+        public async Task<IActionResult> UpdateAuthor([FromRoute] Guid id,AuthorsVM authorsVM)
         {
             var result = await _authorRepository.UpdateAuthorAsync(id, authorsVM); 
             if (result == 0)
@@ -83,7 +83,7 @@ namespace library_management.Controllers
             return Ok(response);
         }
         [HttpPut("delete-author/{id}")]
-        public async Task<IActionResult> DeleteAuthor([FromRoute] int id)
+        public async Task<IActionResult> DeleteAuthor([FromRoute] Guid id)
         {
             var result = await _authorRepository.DeleteAuthorAsync(id);
             if (result == 0)

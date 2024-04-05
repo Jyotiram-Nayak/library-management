@@ -35,11 +35,11 @@ namespace library_management.Controllers
             return Ok(response);
             //return Ok(ResponseHelper.GenerateResponse(true, "Books fetched successfully...", result));
         }
-        [HttpGet("get-book-details/{id}")]
+        [HttpGet("get-book-details/")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetBookDetails([FromRoute] int id)
+        public async Task<IActionResult> GetBookDetails([FromQuery] Guid? bookId, [FromQuery] Guid? authorId, [FromQuery] Guid? isbn, [FromQuery] Guid? categoryId)
         {
-            var result = await _bookRepository.GetBookByIdAsync(id);
+            var result = await _bookRepository.GetBookByIdAsync(bookId,authorId,isbn,categoryId);
             if (result == null)
             {
                 response = new { success = false, message = "somthing went wrong...", data = result };
@@ -70,7 +70,7 @@ namespace library_management.Controllers
 
         [HttpPut("update-book/{id}")]
         [Authorize(Roles = UserRoles.Admin)]
-        public async Task<IActionResult> UpdateBookById([FromRoute] int id, [FromBody] BooksVM booksVM)
+        public async Task<IActionResult> UpdateBookById([FromRoute] Guid id, [FromBody] BooksVM booksVM)
         {
             var result = await _bookRepository.UpdateBookByIdAsync(id, booksVM);
             if (result == 0)
@@ -83,7 +83,7 @@ namespace library_management.Controllers
         }
         [HttpDelete("delete-book/{id}")]
         [Authorize(Roles = UserRoles.Admin)]
-        public async Task<IActionResult> DeleteBookById(int id)
+        public async Task<IActionResult> DeleteBookById(Guid id)
         {
             var result = await _bookRepository.DeleteBookById(id);
             if (result == 0)

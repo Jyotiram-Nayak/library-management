@@ -11,19 +11,19 @@ namespace library_management.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(Roles = UserRoles.Admin)]
-    public class ISBNController : ControllerBase
+    public class BNController : ControllerBase
     {
-        private readonly IISBNRepository _iSBNRepository;
+        private readonly IBNRepository _iSBNRepository;
         private readonly IBookRepository _bookRepository;
         private object response;
 
-        public ISBNController(IISBNRepository iSBNRepository,
+        public BNController(IBNRepository iSBNRepository,
             IBookRepository bookRepository)
         {
             _iSBNRepository = iSBNRepository;
             _bookRepository = bookRepository;
         }
-        [HttpGet("get-all-isbn")]
+        [HttpGet("get-all-bn")]
         public async Task<IActionResult> GetAllISBN()
         {
             var result = await _iSBNRepository.GetISBNAllAsync();
@@ -35,10 +35,10 @@ namespace library_management.Controllers
             response = new { success = true, message = "BookISBN added successfully...", data = result };
             return Ok(response);
         }
-        [HttpPost("add-isbn/{bookId}")]
-        public async Task<IActionResult> AddISBNNumber([FromRoute] int bookId)
+        [HttpPost("add-bn/{bookId}")]
+        public async Task<IActionResult> AddISBNNumber([FromRoute] Guid bookId)
         {
-            var book = await _bookRepository.GetBookByIdAsync(bookId);
+            var book = await _bookRepository.GetBookByIdAsync(bookId,null,null,null);
             if (book == null) { return BadRequest(); }
             var result = await _iSBNRepository.AddISBN(bookId);
             if (result == 0)
@@ -49,7 +49,7 @@ namespace library_management.Controllers
             response = new { success = true, message = "BookISBN added successfully...", data = result };
             return Ok(response);
         }
-        [HttpPut("update-isbn/{isbnno}")]
+        [HttpPut("update-bn/{isbnno}")]
         public async Task<IActionResult> UpdateISBN(string isbnno, [FromQuery]string userId, [FromQuery] bool isIssue)
         {
             var result = await _iSBNRepository.UpdateISBNAsync(isbnno,userId,isIssue);

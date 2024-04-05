@@ -6,8 +6,8 @@ namespace library_management.Data.Repository
     {
         Task<int> AddAuthorAsync(AuthorsVM authorsVM);
         Task<List<AuthorsVM>> GetAllAuthorsAsync();
-        Task<AuthorsVM> GetAuthorByIdAsync(int id);
-        Task<int> UpdateAuthorAsync(int id, AuthorsVM authorsVM);
-        Task<int> DeleteAuthorAsync(int id);
+        Task<AuthorsVM> GetAuthorByIdAsync(Guid id);
+        Task<int> UpdateAuthorAsync(Guid id, AuthorsVM authorsVM);
+        Task<int> DeleteAuthorAsync(Guid id);
     }
 }

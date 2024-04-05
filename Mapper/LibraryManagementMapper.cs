@@ -14,8 +14,8 @@ namespace library_management.Mapper
             CreateMap<AuthorsVM, Authors>();
             CreateMap<BorrowBookVM, Borrowings>();
             CreateMap<Borrowings,BorrowBookVM>();
-            CreateMap<BookISBNVM, BooksISBN>();
-            CreateMap<BooksISBN, BookISBNVM>();
+            CreateMap<BookBNVM, BooksBN>();
+            CreateMap<BooksBN, BookBNVM>();
             CreateMap<Category, CategoryVM>();
             CreateMap<CategoryVM, Category>();
         }
