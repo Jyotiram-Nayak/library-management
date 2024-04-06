@@ -1,27 +1,23 @@
 ﻿using library_management.Data.Model;
-using library_management.Services;
 using System.ComponentModel.DataAnnotations;
 
 namespace library_management.Data.ViewModel
 {
-    public class BooksVM
+    public class BookResponceVM
     {
-        public Guid BookId { get; set; } 
-        [Required]
+        public Guid BookId { get; set; }
         public string Title { get; set; }
-        [Required]
+        public string AuthorName { get; set; }
         public Guid AuthorId { get; set; }
-        [Required]
+
         public Guid ISBN { get; set; }
-        [Required]
-        public DateTime PublicationDate { get; set; }
-        [Required]
         public int AvailableCopies { get; set; }
-        [Required]
         public int TotalCopies { get; set; }
+        public DateTime PublicationDate { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public string? CreatedBy { get; set; } = null;
         public DateTime? UpdatedDate { get; set; }
         public string? UpdatedBy { get; set; }
+        public List<string> Categories { get; set; }
     }
 }

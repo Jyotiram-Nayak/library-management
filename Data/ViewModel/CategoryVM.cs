@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using library_management.Data.Model;
+using System.ComponentModel.DataAnnotations;
 
 namespace library_management.Data.ViewModel
 {
@@ -7,7 +8,6 @@ namespace library_management.Data.ViewModel
         public Guid Id { get; set; }
         [Required]
         public string Name { get; set; }
-        [Required]
         public bool IsActive { get; set; } = true;
     }
 }

@@ -35,11 +35,11 @@ namespace library_management.Controllers
             return Ok(response);
             //return Ok(ResponseHelper.GenerateResponse(true, "Books fetched successfully...", result));
         }
-        [HttpGet("get-book-details/")]
+        [HttpGet("get-book-details/{bookId}")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetBookDetails([FromQuery] Guid? bookId, [FromQuery] Guid? authorId, [FromQuery] Guid? isbn, [FromQuery] Guid? categoryId)
+        public async Task<IActionResult> GetBookDetails(Guid? bookId)
         {
-            var result = await _bookRepository.GetBookByIdAsync(bookId,authorId,isbn,categoryId);
+            var result = await _bookRepository.GetBookByIdAsync(bookId);
             if (result == null)
             {
                 response = new { success = false, message = "somthing went wrong...", data = result };
@@ -55,13 +55,13 @@ namespace library_management.Controllers
             var author = await _authorRepository.GetAuthorByIdAsync(booksVM.AuthorId);
             if (author == null)
             {
-                response = new { success = false, message = "somthing went wrong...", data = author };
+                response = new { success = false, message = "Failed to add.", data = author };
                 return Unauthorized(response);
             }
             var result = await _bookRepository.AddBooksAsync(booksVM);
             if (result == 0)
             {
-                response = new { success = false, message = "somthing went wrong...", data = result };
+                response = new { success = false, message = "Failed to add.", data = result };
                 return Unauthorized(response);
             };
             response = new { success = true, message = "Book added successfully...", data = result };
@@ -75,7 +75,7 @@ namespace library_management.Controllers
             var result = await _bookRepository.UpdateBookByIdAsync(id, booksVM);
             if (result == 0)
             {
-                response = new { success = false, message = "somthing went wrong...", data = result };
+                response = new { success = false, message = "Failed to update.", data = result };
                 return BadRequest(response);
             };
             response = new { success = true, message = "Book updated successfully...", data = result };
@@ -88,10 +88,35 @@ namespace library_management.Controllers
             var result = await _bookRepository.DeleteBookById(id);
             if (result == 0)
             {
-                response = new { success = false, message = "somthing went wrong...", data = result };
+                response = new { success = false, message = "Failed to delete.", data = result };
                 return BadRequest(response);
             };
             response = new { success = true, message = "Book deleted successfully...", data = result };
+            return Ok(response);
+        }
+        [HttpPost("add-book-category")]
+        public async Task<IActionResult> AddCategoryToBook([FromQuery]Guid bookId,[FromQuery] Guid categoryId)
+        {
+            var result = await _bookRepository.AddCategoryToBookAsync(bookId, categoryId);
+            if (result == 0)
+            {
+                response = new { success = false, message = "Failed to add category to book.", data = result };
+                return BadRequest(response);
+            };
+            response = new { success = true, message = "Category added to Book successfully...", data = result };
+            return Ok(response);
+        }
+
+        [HttpGet("filter-book")]
+        public async Task<IActionResult> FilterBooks([FromQuery] string filterOn, [FromQuery] string filterString)
+        {
+            var result = _bookRepository.FilterBooksAsync(filterOn, filterString);
+            if (result == null)
+            {
+                response = new { success = false, message = "somthing went wrong...", data = result };
+                return BadRequest(response);
+            };
+            response = new { success = true, message = "Book fetched successfully...", data = result };
             return Ok(response);
         }
     }

@@ -26,7 +26,6 @@ builder.Services.AddTransient<IEmailServices, EmailServices>();
 builder.Services.AddTransient<IUserServices, UserServices>();
 builder.Services.AddTransient<IBookRepository, BookRepository>();
 builder.Services.AddTransient<IAuthorRepository, AuthorRepository>();
-builder.Services.AddTransient<IBNRepository, BNRepository>();
 builder.Services.AddTransient<IBorrowRepository, BorrowRepository>();
 builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
 

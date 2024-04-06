@@ -10,7 +10,7 @@ namespace library_management.Data.ViewModel
         [Required]
         public string Biography { get; set; }
         public DateTime CreatedDate { get; set; }
-        public string CreatedBy { get; set; }
+        public string? CreatedBy { get; set; }
         public DateTime? UpdatedDate { get; set; }
         public string? UpdatedBy { get; set; }
         

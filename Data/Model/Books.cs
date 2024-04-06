@@ -18,10 +18,9 @@ namespace library_management.Data.Model
         public Guid ISBN { get; set; }
         [Required]
         public DateTime PublicationDate { get; set; }
-        [Required]
-        public Guid CategoryID { get; set; }
-        [ForeignKey("CategoryID")]
-        public Category Category { get; set; }
+        public ICollection<BookCategory> BookCategories { get; set; }
+        //[ForeignKey("CategoryID")]
+        //public Category Category { get; set; }
         [Required]
         public int AvailableCopies { get; set; }
         [Required]

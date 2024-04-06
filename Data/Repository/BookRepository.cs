@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.JsonPatch;
 using static System.Reflection.Metadata.BlobBuilder;
 using library_management.Services;
+using System.Net;
+using System.Collections.Generic;
 
 
 namespace library_management.Data.Repository
@@ -36,23 +38,37 @@ namespace library_management.Data.Repository
             _context.Books.Add(_mapper.Map<Books>(booksVM));
             return await _context.SaveChangesAsync();
         }
-        public async Task<List<BooksVM>> GetBookByIdAsync(Guid? bookId,Guid? authorId,Guid? isbn,Guid? categoryId)
+        public async Task<BookResponceVM> GetBookByIdAsync(Guid? bookId)
         {
-            var query = _context.Books.AsQueryable();
-            if (bookId.HasValue)
-                query = query.Where(x => x.BookId == bookId);
+            //var books = await _context.Books.FindAsync(bookId);
+            //return _mapper.Map<BooksVM>(books);
+            var book = await _context.Books
+            .Include(b => b.Authors)
+            .Include(b => b.BookCategories).ThenInclude(bc => bc.Category)
+            .FirstOrDefaultAsync(b => b.BookId == bookId);
 
-            if (authorId.HasValue)
-                query = query.Where(x => x.AuthorId == authorId);
+            if (book == null)
+            {
+                return null;
+            }
 
-            if (isbn.HasValue)
-                query = query.Where(x => x.ISBN == isbn);
-
-            if (categoryId.HasValue)
-                query = query.Where(x => x.CategoryID == categoryId);
-
-            var books = await query.ToListAsync();
-            return _mapper.Map<List<BooksVM>>(books);
+            var bookViewModel = new BookResponceVM
+            {
+                BookId = book.BookId,
+                Title = book.Title,
+                AuthorId = book.AuthorId,
+                AuthorName = book.Authors.Name,
+                ISBN = book.ISBN,
+                PublicationDate = book.PublicationDate,
+                AvailableCopies = book.AvailableCopies,
+                TotalCopies = book.TotalCopies,
+                CreatedDate = book.CreatedDate,
+                CreatedBy = book.CreatedBy,
+                UpdatedDate = book.UpdatedDate,
+                UpdatedBy = book.UpdatedBy,
+                Categories = book.BookCategories.Select(bc => bc.Category.Name).ToList()
+            };
+            return bookViewModel;
         }
         public async Task<int> UpdateBookByIdAsync(Guid id, BooksVM booksVM)
         {
@@ -93,6 +109,59 @@ namespace library_management.Data.Repository
             var book = await _context.Books.FindAsync(bookId);
             book.AvailableCopies = isAdd == true ? book.AvailableCopies + 1 : book.AvailableCopies - 1;
             return await _context.SaveChangesAsync();
+        }
+        public async Task<int> AddCategoryToBookAsync(Guid bookId,Guid categoryId)
+        {
+            var existingEntity = await _context.BookCategorys.FirstOrDefaultAsync(bc => bc.BookId == bookId && bc.CategoryId == categoryId);
+            if(existingEntity == null)
+            {
+                var bookCategory = new BookCategory
+                {
+                    Id = Guid.NewGuid(),
+                    BookId = bookId,
+                    CategoryId = categoryId
+                };
+                await _context.BookCategorys.AddAsync(bookCategory);
+            }
+            return await _context.SaveChangesAsync();
+        }
+        public async Task<List<BookResponceVM>> FilterBooksAsync(string? filterOn, string? filterString)
+        {
+            var query = _context.Books.Include(b => b.Authors).Include(b => b.BookCategories)
+                .ThenInclude(bc => bc.Category).AsQueryable();
+
+            if (!string.IsNullOrEmpty(filterOn) && !string.IsNullOrEmpty(filterString))
+            {
+                switch (filterOn.ToLower())
+                {
+                    case "title":
+                        query = query.Where(b => b.Title.Contains(filterString));
+                        break;
+                    case "author":
+                        query = query.Where(b => b.Authors.Name.Contains(filterString));
+                        break;
+                    case "category":
+                        query = query.Where(b => b.BookCategories.Any(bc => bc.Category.Name.Contains(filterString)));
+                        break;
+                    default:
+                        break;
+                }
+            }
+            var filteredBooks = await query
+            .Select(b => new BookResponceVM
+            {
+                BookId = b.BookId,
+                Title = b.Title,
+                AuthorId=b.AuthorId,
+                ISBN=b.ISBN,
+                AuthorName = b.Authors.Name,
+                AvailableCopies = b.AvailableCopies,
+                TotalCopies = b.TotalCopies,
+                Categories = b.BookCategories.Select(bc => bc.Category.Name).ToList()
+            })
+            .ToListAsync();
+
+            return filteredBooks;
         }
     }
 }

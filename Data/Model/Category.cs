@@ -11,5 +11,6 @@ namespace library_management.Data.Model
         public string Name { get; set; }
         [Required]
         public bool IsActive { get; set; } = true;
+        public ICollection<BookCategory> BookCategories { get; set; }
     }
 }
