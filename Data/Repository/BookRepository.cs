@@ -75,9 +75,14 @@ namespace library_management.Data.Repository
             var book = await _context.Books.Where(x => x.BookId == id).FirstOrDefaultAsync();
             if (book != null)
             {
-                booksVM.UpdatedDate = DateTime.Now;
-                booksVM.UpdatedBy = _userServices.GetUserId();
-                _mapper.Map<Books>(booksVM);
+                book.Title = booksVM.Title;
+                book.AuthorId = booksVM.AuthorId;
+                book.ISBN= booksVM.ISBN;
+                book.PublicationDate= booksVM.PublicationDate;
+                book.AvailableCopies = booksVM.AvailableCopies;
+                book.TotalCopies = booksVM.TotalCopies;
+                book.UpdatedBy = _userServices.GetUserId();
+                book.UpdatedDate = DateTime.Now;
             };
             var status = await _context.SaveChangesAsync();
             return status;
